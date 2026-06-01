@@ -9,18 +9,15 @@ export async function GET() {
   }
 
   const user = db.prepare(
-    "SELECT id, email, display_name, role, skills, tshirt, lunch, allergies, created_at FROM users WHERE id = ?"
+    "SELECT id, email, display_name, role, tshirt, created_at FROM users WHERE id = ?"
   ).get(session.userId) as {
     id: number; email: string; display_name: string; role: string;
-    skills: string; tshirt: string; lunch: string; allergies: string; created_at: string;
+    tshirt: string; created_at: string;
   } | undefined;
 
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  return NextResponse.json({
-    ...user,
-    skills: JSON.parse(user.skills ?? "[]"),
-  });
+  return NextResponse.json(user);
 }
