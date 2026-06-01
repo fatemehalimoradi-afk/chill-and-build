@@ -2,9 +2,12 @@
 FROM node:22-alpine AS deps
 RUN apk add --no-cache libc6-compat python3 make g++
 WORKDIR /app
+RUN npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
+    npm config set fetch-retries 5
 
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm install --prefer-offline --no-audit --no-fund
 
 # ── Stage 2: builder ─────────────────────────────────────────────
 FROM node:22-alpine AS builder
