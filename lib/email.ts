@@ -33,7 +33,7 @@ export async function sendInvitationEmail({
     <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;background:#06060e;color:#f3f3fb;border-radius:16px">
       <h2 style="margin:0 0 8px;font-size:22px">You're invited to join Chill &amp; Build 🎉</h2>
       <p style="color:#a3a3c2;margin:0 0 24px">
-        <strong style="color:#f3f3fb">${inviterName}</strong> has invited you to join ${label} at the Ruberah hackathon on <strong>June 12</strong>.
+        <strong style="color:#f3f3fb">${inviterName}</strong> has invited you to join ${label} at the Rooberah hackathon on <strong>June 12</strong>.
       </p>
       <a href="${acceptUrl}"
          style="display:inline-block;padding:12px 24px;background:linear-gradient(135deg,#d36bff,#9b6bff);color:#fff;text-decoration:none;border-radius:12px;font-weight:600;font-size:15px">

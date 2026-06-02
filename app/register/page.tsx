@@ -2,15 +2,16 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import LunchPicker from '@/app/components/LunchPicker';
+import RegistrationSocialProof from '@/app/components/RegistrationSocialProof';
 
-const TEAMS = ['Support', 'Tech Support', 'Upsell', 'Insights', 'Management', 'HR', 'Product'];
-const TSHIRT_SIZES = ['S', 'L', 'XL', '2XL'];
-const STEPS = ['Account', 'Profile', 'Logistics'];
+const TEAMS = ['Support', 'Tech Support', 'Upsell', 'Insights', 'Management', 'HR', 'Product', 'Marketing', 'Executive'];
+const STEPS = ['Account', 'Profile', 'Lunch'];
 
 type FormData = {
   email: string; password: string; confirmPassword: string;
   displayName: string; role: string;
-  tshirt: string;
+  lunch: string;
 };
 
 export default function RegisterPage() {
@@ -21,7 +22,7 @@ export default function RegisterPage() {
   const [data, setData] = useState<FormData>({
     email: '', password: '', confirmPassword: '',
     displayName: '', role: '',
-    tshirt: '',
+    lunch: '',
   });
 
   function set(field: keyof FormData, value: string) {
@@ -43,7 +44,7 @@ export default function RegisterPage() {
       if (!data.role) return 'Please select your role.';
     }
     if (step === 2) {
-      if (!data.tshirt) return 'Please select your T-shirt size.';
+      if (!data.lunch) return 'Please select your lunch option.';
     }
     return null;
   }
@@ -63,7 +64,7 @@ export default function RegisterPage() {
           password: data.password,
           displayName: data.displayName,
           role: data.role,
-          tshirt: data.tshirt,
+          lunch: data.lunch,
         }),
       });
       const json = await res.json();
@@ -80,29 +81,17 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex" style={{ background: 'var(--bg)' }}>
-      {/* Left panel */}
       <div className="hidden lg:flex flex-col justify-between w-96 shrink-0 p-10" style={{ borderRight: '1px solid var(--line)' }}>
         <Link href="/" className="flex items-center gap-1 font-bold text-lg">
           <span style={{ color: 'var(--pink)' }}>Chill</span>
           <span className="mx-1" style={{ color: 'var(--tx-lo)' }}>&</span>
           <span style={{ color: 'var(--purple)' }}>Build</span>
         </Link>
-        <div>
-          <p className="text-2xl font-bold leading-snug mb-4">One day.<br />One working AI solution.</p>
-          <p style={{ color: 'var(--tx-mid)' }}>Join Ruberah builders on June 12. Coffee, lunch and GPU credits on us.</p>
-          <div className="mt-6 flex -space-x-2">
-            {['AB', 'CD', 'EF', 'GH'].map(i => (
-              <div key={i} className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2"
-                style={{ borderColor: 'var(--bg)', background: 'var(--purple)', color: '#fff' }}>{i}</div>
-            ))}
-          </div>
-          <p className="text-sm mt-2" style={{ color: 'var(--tx-lo)' }}>Sara, Ali, Nima &amp; 139 others are in.</p>
-        </div>
+        <RegistrationSocialProof />
       </div>
 
-      {/* Form */}
       <div className="flex-1 flex items-center justify-center px-6 py-12">
-        <div className="w-full max-w-sm">
+        <div className={`w-full ${step === 2 ? 'max-w-lg' : 'max-w-sm'}`}>
           <div className="lg:hidden mb-6">
             <Link href="/" className="flex items-center gap-1 font-bold text-lg">
               <span style={{ color: 'var(--pink)' }}>Chill</span>
@@ -111,8 +100,7 @@ export default function RegisterPage() {
             </Link>
           </div>
 
-          {/* Step indicators */}
-          <div className="flex items-center gap-2 mb-8">
+          <div className="flex items-center gap-2 mb-8 flex-wrap">
             {STEPS.map((s, i) => (
               <div key={s} className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5">
@@ -125,12 +113,13 @@ export default function RegisterPage() {
                   </div>
                   <span className="text-sm" style={{ color: i === step ? 'var(--tx-hi)' : 'var(--tx-lo)' }}>{s}</span>
                 </div>
-                {i < 2 && <div className="w-8 h-px" style={{ background: i < step ? 'var(--ok)' : 'var(--line)' }} />}
+                {i < STEPS.length - 1 && (
+                  <div className="w-8 h-px" style={{ background: i < step ? 'var(--ok)' : 'var(--line)' }} />
+                )}
               </div>
             ))}
           </div>
 
-          {/* Step 0: Account */}
           {step === 0 && (
             <div className="space-y-4">
               <div>
@@ -140,7 +129,7 @@ export default function RegisterPage() {
               <div>
                 <label className="block text-sm mb-1.5" style={{ color: 'var(--tx-mid)' }}>Email</label>
                 <input type="email" value={data.email} onChange={e => set('email', e.target.value)}
-                  placeholder="you@ruberah.com" className="w-full px-4 py-2.5 rounded-xl text-sm outline-none" style={inputStyle} />
+                  placeholder="you@rooberah.co" className="w-full px-4 py-2.5 rounded-xl text-sm outline-none" style={inputStyle} />
               </div>
               <div>
                 <label className="block text-sm mb-1.5" style={{ color: 'var(--tx-mid)' }}>Password</label>
@@ -155,7 +144,6 @@ export default function RegisterPage() {
             </div>
           )}
 
-          {/* Step 1: Profile */}
           {step === 1 && (
             <div className="space-y-5">
               <div>
@@ -186,31 +174,15 @@ export default function RegisterPage() {
             </div>
           )}
 
-          {/* Step 2: Logistics */}
           {step === 2 && (
-            <div className="space-y-6">
+            <div className="space-y-5">
               <div>
-                <h1 className="text-2xl font-bold mb-1">Event-day logistics</h1>
-                <p className="text-sm mb-6" style={{ color: 'var(--tx-mid)' }}>Lock these in so we order enough.</p>
+                <h1 className="text-2xl font-bold mb-1">Choose your lunch</h1>
+                <p className="text-sm mb-6" style={{ color: 'var(--tx-mid)' }}>
+                  Pick one option for event day. Joining from another office? Use the button at the bottom — no lunch order needed.
+                </p>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--tx-hi)' }}>T-shirt size</label>
-                <p className="text-xs mb-3" style={{ color: 'var(--tx-lo)' }}>Limited-edition Chill &amp; Build tee. Unisex fit.</p>
-                <div className="flex gap-2 flex-wrap">
-                  {TSHIRT_SIZES.map(sz => (
-                    <button key={sz} onClick={() => set('tshirt', sz)} type="button"
-                      className="w-12 h-10 rounded-lg text-sm font-medium transition-all"
-                      style={{
-                        background: data.tshirt === sz ? 'var(--purple)' : 'rgba(255,255,255,0.05)',
-                        border: `1px solid ${data.tshirt === sz ? 'var(--purple)' : 'var(--line)'}`,
-                        color: data.tshirt === sz ? '#fff' : 'var(--tx-mid)',
-                      }}>
-                      {sz}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <LunchPicker value={data.lunch} onChange={id => set('lunch', id)} />
             </div>
           )}
 

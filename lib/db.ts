@@ -71,6 +71,69 @@ function openDb() {
     `);
   }
 
+  if (version < 2) {
+    db.exec(`ALTER TABLE users ADD COLUMN lunch TEXT; PRAGMA user_version = 2;`);
+  }
+
+  if (version < 3) {
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS lunch_options (
+        id          TEXT PRIMARY KEY,
+        name        TEXT NOT NULL,
+        ingredients TEXT NOT NULL,
+        image       TEXT,
+        sort_order  INTEGER NOT NULL DEFAULT 0
+      );
+      PRAGMA user_version = 3;
+    `);
+  }
+
+  if (version < 4) {
+    const { LUNCH_MENU } = require("./lunch-menu") as typeof import("./lunch-menu");
+    const upsert = db.prepare(`
+      INSERT INTO lunch_options (id, name, ingredients, image, sort_order)
+      VALUES (@id, @name, @ingredients, NULL, @sort_order)
+      ON CONFLICT(id) DO UPDATE SET
+        name = excluded.name,
+        ingredients = excluded.ingredients,
+        image = NULL,
+        sort_order = excluded.sort_order
+    `);
+    const tx = db.transaction(() => {
+      for (const item of LUNCH_MENU) upsert.run(item);
+    });
+    tx();
+    db.exec(`PRAGMA user_version = 4;`);
+  }
+
+  if (version < 5) {
+    db.exec(`
+      INSERT INTO lunch_options (id, name, ingredients, image, sort_order)
+      VALUES (
+        'other-office',
+        '(سایر دفاتر) Other office — no lunch',
+        'I am joining from another office and do not need a Tehran office lunch order.',
+        NULL,
+        99
+      )
+      ON CONFLICT(id) DO UPDATE SET
+        name = excluded.name,
+        ingredients = excluded.ingredients,
+        image = NULL,
+        sort_order = excluded.sort_order;
+      PRAGMA user_version = 5;
+    `);
+  }
+
+  if (version < 6) {
+    db.exec(`
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_teams_name_unique
+        ON teams(name COLLATE NOCASE)
+        WHERE name IS NOT NULL AND TRIM(name) != '';
+      PRAGMA user_version = 6;
+    `);
+  }
+
   return db;
 }
 

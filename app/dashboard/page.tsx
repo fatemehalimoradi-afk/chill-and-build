@@ -6,7 +6,8 @@ import AppNav from '@/app/components/AppNav';
 
 type User = {
   id: number; email: string; display_name: string; role: string;
-  tshirt: string;
+  lunch: string | null;
+  lunch_label: string | null;
 };
 
 function Countdown() {
@@ -88,15 +89,25 @@ export default function DashboardPage() {
           </div>
 
           <div className="p-6 rounded-2xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--line)' }}>
-            <h2 className="font-semibold mb-4">Event-day logistics</h2>
+            <h2 className="font-semibold mb-4">Lunch</h2>
             <div className="space-y-3 text-sm">
-              <div className="flex justify-between items-center">
-                <span style={{ color: 'var(--tx-lo)' }}>T-shirt size</span>
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">{user.tshirt}</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(54,211,154,0.1)', color: 'var(--ok)' }}>Saved</span>
+              {user.lunch ? (
+                <div className="flex justify-between items-start gap-4">
+                  <span style={{ color: 'var(--tx-lo)' }}>Your choice</span>
+                  <div className="text-right">
+                    <span className="font-medium">{user.lunch_label ?? user.lunch}</span>
+                    <span className="block text-xs mt-1 px-2 py-0.5 rounded-full ml-auto w-fit"
+                      style={{ background: 'rgba(54,211,154,0.1)', color: 'var(--ok)' }}>
+                      Saved
+                    </span>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <p style={{ color: 'var(--tx-mid)' }}>You haven&apos;t chosen lunch yet.</p>
+              )}
+              <Link href="/t-shirt-lunch" className="inline-block text-sm" style={{ color: 'var(--pink)' }}>
+                {user.lunch ? 'Change lunch →' : 'Choose lunch →'}
+              </Link>
             </div>
           </div>
 
@@ -111,7 +122,7 @@ export default function DashboardPage() {
                 { time: '12:00', event: 'Lunch & Chill' },
                 { time: '13:00', event: 'Main Build Time' },
                 { time: '17:30', event: 'Lightning Demos' },
-                { time: '18:30', event: 'Dinner + Awards + Celebration' },
+                { time: '18:30', event: 'Awards + Celebration' },
               ].map(s => (
                 <div key={s.time} className="flex gap-4">
                   <span className="w-12 shrink-0 font-mono" style={{ color: 'var(--pink)' }}>{s.time}</span>

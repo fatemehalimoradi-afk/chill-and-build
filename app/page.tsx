@@ -34,7 +34,7 @@ const TRACKS = [
   { name: 'AI Agents', desc: 'Autonomous tools that plan, call APIs and get real work done.', color: 'var(--pink)' },
   { name: 'Dev Experience', desc: 'Copilots, codegen and tooling that make builders 10× faster.', color: 'var(--blue)' },
   { name: 'Creative AI', desc: 'Generative image, audio & video for product and marketing.', color: 'var(--cyan)' },
-  { name: 'Applied ML', desc: "Models that turn Ruberah's data into a sharper product edge.", color: 'var(--purple)' },
+  { name: 'Applied ML', desc: "Models that turn Rooberah's data into a sharper product edge.", color: 'var(--purple)' },
 ];
 
 const SCHEDULE = [
@@ -45,7 +45,7 @@ const SCHEDULE = [
   { time: '12:00', title: 'Lunch & Chill', desc: 'Break, recharge, connect.' },
   { time: '13:00', title: 'Main Build Time', desc: 'Heads down. Build something real.' },
   { time: '17:30', title: 'Lightning Demos', desc: 'Show what you built.' },
-  { time: '18:30', title: 'Dinner + Awards + Celebration', desc: 'Winners announced. Celebrate together.' },
+  { time: '18:30', title: 'Awards + Celebration', desc: 'Winners announced. Celebrate together.' },
 ];
 
 type Stats = { registeredCount: number; teamsCount: number; names: string[] };
@@ -89,7 +89,7 @@ export default function LandingPage() {
       <section className="max-w-5xl mx-auto px-6 py-24 text-center">
         <div className="inline-flex items-center gap-2 text-xs px-3 py-1 rounded-full mb-8" style={{ background: 'rgba(54,211,154,0.1)', border: '1px solid rgba(54,211,154,0.2)', color: 'var(--ok)' }}>
           <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-          Registration open · Presented by Ruberah
+          Registration open · Presented by Rooberah
         </div>
         <h1 className="text-6xl md:text-8xl font-bold mb-6 leading-none">
           <span style={{ color: 'var(--pink)' }}>Chill</span>{' '}
@@ -97,7 +97,7 @@ export default function LandingPage() {
           <span style={{ color: 'var(--purple)' }}>Build</span>
         </h1>
         <p className="text-xl max-w-xl mx-auto mb-4" style={{ color: 'var(--tx-mid)' }}>
-          One day. One idea. One working AI solution. Join Ruberah&apos;s internal AI hackathon and build something useful, creative, and real.
+          One day. One idea. One working AI solution. Join Rooberah&apos;s internal AI hackathon and build something useful, creative, and real.
         </p>
         {stats && stats.registeredCount > 0 && (
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -118,7 +118,7 @@ export default function LandingPage() {
         <div className="flex items-center justify-center gap-4 text-sm mb-10" style={{ color: 'var(--tx-lo)' }}>
           <span>Fri · June 12, 2026</span>
           <span>·</span>
-          <span>Ruberah HQ · Tehran Office</span>
+          <span>Rooberah HQ · Tehran Office</span>
         </div>
         <div className="flex items-center justify-center gap-4 mb-16">
           <Link href="/register" className="px-6 py-3 rounded-xl font-semibold text-white transition-opacity hover:opacity-80" style={{ background: 'linear-gradient(135deg, var(--pink), var(--purple))' }}>
@@ -191,7 +191,7 @@ export default function LandingPage() {
       </section>
 
       <footer className="text-center py-8 text-sm" style={{ color: 'var(--tx-lo)', borderTop: '1px solid var(--line)' }}>
-        Chill &amp; Build · Ruberah · June 12, 2026
+        Chill &amp; Build · Rooberah · June 12, 2026
       </footer>
     </div>
   );

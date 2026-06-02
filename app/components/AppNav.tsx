@@ -6,7 +6,7 @@ const NAV_ITEMS = [
   { label: 'Dashboard', href: '/dashboard' },
   { label: 'Teams', href: '/teams' },
   { label: 'Schedule', href: '#' },
-  { label: 'Mentor Help', href: '#' },
+  // { label: 'Mentor Help', href: '#' },
 ];
 
 export default function AppNav({

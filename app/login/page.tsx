@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import RegistrationSocialProof from '@/app/components/RegistrationSocialProof';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -42,17 +43,7 @@ export default function LoginPage() {
           <span className="mx-1" style={{ color: 'var(--tx-lo)' }}>&</span>
           <span style={{ color: 'var(--purple)' }}>Build</span>
         </Link>
-        <div>
-          <p className="text-2xl font-bold leading-snug mb-4">One day.<br />One working AI solution.</p>
-          <p style={{ color: 'var(--tx-mid)' }}>Join Ruberah builders on June 12. Coffee, lunch and GPU credits on us.</p>
-          <div className="mt-6 flex -space-x-2">
-            {['AB', 'CD', 'EF', 'GH'].map(i => (
-              <div key={i} className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2"
-                style={{ borderColor: 'var(--bg)', background: 'var(--purple)', color: '#fff' }}>{i}</div>
-            ))}
-          </div>
-          <p className="text-sm mt-2" style={{ color: 'var(--tx-lo)' }}>Sara, Ali, Nima &amp; 139 others are in.</p>
-        </div>
+        <RegistrationSocialProof />
       </div>
 
       {/* Form */}

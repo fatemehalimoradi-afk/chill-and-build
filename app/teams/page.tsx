@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AppNav from '@/app/components/AppNav';
+import Toast from '@/app/components/Toast';
 
 type User = { id: number; display_name: string; email: string; role: string; team_id: number | null };
 type Team = { id: number; name: string | null; created_by: number; members: { id: number; display_name: string; email: string; role: string }[] };
@@ -31,6 +32,7 @@ export default function TeamsPage() {
   const [editingName, setEditingName] = useState(false);
   const [teamName, setTeamName] = useState('');
   const [savingName, setSavingName] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
   function showToast(msg: string, ok = true) {
@@ -91,9 +93,24 @@ export default function TeamsPage() {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: teamName }),
     });
+    const data = await res.json();
     setSavingName(false);
-    if (!res.ok) { showToast('Failed to save name.', false); return; }
+    if (!res.ok) { showToast(data.error || 'Failed to save name.', false); return; }
     showToast('Team name saved!');
+    setEditingName(false);
+    await loadData();
+  }
+
+  async function leaveTeam() {
+    if (!myTeam || leaving) return;
+    if (!confirm('Leave this team? You can create a new one or join another later.')) return;
+
+    setLeaving(true);
+    const res = await fetch('/api/teams/leave', { method: 'POST' });
+    const data = await res.json();
+    setLeaving(false);
+    if (!res.ok) { showToast(data.error, false); return; }
+    showToast(data.teamDeleted ? 'You left the team. The empty team was removed.' : 'You left the team.');
     setEditingName(false);
     await loadData();
   }
@@ -110,12 +127,7 @@ export default function TeamsPage() {
   return (
     <div style={{ background: 'var(--bg)', color: 'var(--tx-hi)', minHeight: '100vh' }}>
       {/* Toast */}
-      {toast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-3 rounded-xl text-sm font-medium shadow-lg"
-          style={{ background: toast.ok ? 'rgba(54,211,154,0.15)' : 'rgba(255,93,114,0.15)', color: toast.ok ? 'var(--ok)' : 'var(--danger)', border: `1px solid ${toast.ok ? 'rgba(54,211,154,0.3)' : 'rgba(255,93,114,0.3)'}` }}>
-          {toast.msg}
-        </div>
-      )}
+      {toast && <Toast message={toast.msg} ok={toast.ok} />}
 
       <AppNav
         userInitials={me ? (me.display_name ? me.display_name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2) : me.email[0].toUpperCase()) : '?'}
@@ -154,11 +166,18 @@ export default function TeamsPage() {
                       <p className="font-semibold text-lg">{myTeam.name || <span style={{ color: 'var(--tx-lo)' }}>Unnamed team</span>}</p>
                       <p className="text-xs mt-0.5" style={{ color: 'var(--tx-lo)' }}>{myTeam.members.length} / 2 members</p>
                     </div>
-                    <button onClick={() => setEditingName(true)}
-                      className="ml-auto text-xs px-3 py-1.5 rounded-lg transition-colors"
-                      style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--tx-mid)', border: '1px solid var(--line)' }}>
-                      {myTeam.name ? 'Rename' : 'Set name'}
-                    </button>
+                    <div className="ml-auto flex items-center gap-2">
+                      <button onClick={() => setEditingName(true)}
+                        className="text-xs px-3 py-1.5 rounded-lg transition-colors"
+                        style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--tx-mid)', border: '1px solid var(--line)' }}>
+                        {myTeam.name ? 'Rename' : 'Set name'}
+                      </button>
+                      <button onClick={leaveTeam} disabled={leaving}
+                        className="text-xs px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                        style={{ background: 'rgba(255,93,114,0.1)', color: 'var(--danger)', border: '1px solid rgba(255,93,114,0.2)' }}>
+                        {leaving ? 'Leaving…' : 'Leave team'}
+                      </button>
+                    </div>
                   </>
                 )}
               </div>

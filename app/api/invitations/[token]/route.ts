@@ -13,7 +13,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ tok
     FROM invitations i
     JOIN users u  ON u.id  = i.inviter_id
     JOIN users u2 ON u2.id = i.invitee_id
-    JOIN teams t  ON t.id  = i.team_id
+    LEFT JOIN teams t  ON t.id  = i.team_id
     WHERE i.token = ?
   `).get(token) as {
     id: number; status: string; expires_at: string; team_id: number;

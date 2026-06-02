@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { signToken } from "@/lib/jwt";
+import { isValidLunchId } from "@/lib/lunch";
 import { COOKIE_NAME } from "@/lib/session";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password, displayName, role, tshirt } = await req.json();
+    const { email, password, displayName, role, lunch } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json({ error: "Email and password are required." }, { status: 400 });
@@ -25,6 +26,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Password must be at least 8 characters." }, { status: 400 });
     }
 
+    if (!lunch || !isValidLunchId(lunch)) {
+      return NextResponse.json({ error: "Please select a valid lunch option." }, { status: 400 });
+    }
+
     const existing = db.prepare("SELECT id FROM users WHERE email = ?").get(email);
     if (existing) {
       return NextResponse.json({ error: "This email is already registered." }, { status: 409 });
@@ -33,9 +38,9 @@ export async function POST(req: NextRequest) {
     const hash = await bcrypt.hash(password, 12);
 
     const result = db.prepare(`
-      INSERT INTO users (email, password, display_name, role, tshirt)
+      INSERT INTO users (email, password, display_name, role, lunch)
       VALUES (?, ?, ?, ?, ?)
-    `).run(email, hash, displayName ?? null, role ?? null, tshirt ?? null);
+    `).run(email, hash, displayName ?? null, role ?? null, lunch);
 
     const token = signToken({ userId: result.lastInsertRowid as number, email });
 
@@ -44,7 +49,7 @@ export async function POST(req: NextRequest) {
       httpOnly: true,
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
       secure: process.env.NODE_ENV === "production",
     });
     return res;
